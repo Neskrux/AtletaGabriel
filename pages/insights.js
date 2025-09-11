@@ -3,18 +3,22 @@ import { motion } from 'framer-motion';
 import { Brain, TrendingUp, AlertTriangle, CheckCircle, Shield, Zap, Moon, Target } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import useStore from '../lib/store';
+import { useLanguage } from '../lib/LanguageContext';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ptBR, enUS } from 'date-fns/locale';
 
 const Insights = () => {
   const { athlete, todayData, history } = useStore();
+  const { t, language } = useLanguage();
   const [insights, setInsights] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
+  
+  const locale = language === 'pt-BR' ? ptBR : enUS;
 
   useEffect(() => {
     generateInsights();
     generateRecommendations();
-  }, [todayData, history]);
+  }, [todayData, history, language]);
 
   const generateInsights = () => {
     const newInsights = [];
@@ -25,18 +29,22 @@ const Insights = () => {
         id: 1,
         type: 'critical',
         icon: <AlertTriangle className="w-5 h-5" />,
-        title: 'SLEEP ALERT',
-        message: 'Poor sleep quality detected. Recovery compromised. Adjust training intensity.',
-        priority: 'HIGH'
+        title: t('insights.sleepAlert'),
+        message: language === 'pt-BR' 
+          ? 'Qualidade de sono ruim detectada. Recuperação comprometida. Ajuste a intensidade do treino.'
+          : 'Poor sleep quality detected. Recovery compromised. Adjust training intensity.',
+        priority: t('insights.high')
       });
     } else if (todayData.sleepQuality === 'excellent') {
       newInsights.push({
         id: 2,
         type: 'positive',
         icon: <CheckCircle className="w-5 h-5" />,
-        title: 'OPTIMAL RECOVERY',
-        message: 'Excellent sleep quality. Body primed for intense training.',
-        priority: 'LOW'
+        title: t('insights.optimalRecovery'),
+        message: language === 'pt-BR'
+          ? 'Excelente qualidade de sono. Corpo preparado para treino intenso.'
+          : 'Excellent sleep quality. Body primed for intense training.',
+        priority: t('insights.low')
       });
     }
     
@@ -46,18 +54,22 @@ const Insights = () => {
         id: 3,
         type: 'warning',
         icon: <Zap className="w-5 h-5" />,
-        title: 'LOW ENERGY',
-        message: 'Energy below 50%. Consider lighter training or active recovery.',
-        priority: 'MEDIUM'
+        title: t('insights.lowEnergy'),
+        message: language === 'pt-BR'
+          ? 'Energia abaixo de 50%. Considere treino mais leve ou recuperação ativa.'
+          : 'Energy below 50%. Consider lighter training or active recovery.',
+        priority: t('insights.medium')
       });
     } else if (todayData.energy > 80) {
       newInsights.push({
         id: 4,
         type: 'positive',
         icon: <Zap className="w-5 h-5" />,
-        title: 'HIGH ENERGY',
-        message: 'Energy levels optimal. Perfect for high-intensity sessions.',
-        priority: 'LOW'
+        title: t('insights.highEnergy'),
+        message: language === 'pt-BR'
+          ? 'Níveis de energia ótimos. Perfeito para sessões de alta intensidade.'
+          : 'Energy levels optimal. Perfect for high-intensity sessions.',
+        priority: t('insights.low')
       });
     }
     
@@ -67,9 +79,11 @@ const Insights = () => {
         id: 5,
         type: 'critical',
         icon: <AlertTriangle className="w-5 h-5" />,
-        title: 'INJURY RISK',
-        message: 'Pain detected. Consider physiotherapy or rest. Do not push through pain.',
-        priority: 'HIGH'
+        title: t('insights.injuryRisk'),
+        message: language === 'pt-BR'
+          ? 'Dor detectada. Considere fisioterapia ou descanso. Não force através da dor.'
+          : 'Pain detected. Consider physiotherapy or rest. Do not push through pain.',
+        priority: t('insights.high')
       });
     }
     
@@ -79,9 +93,11 @@ const Insights = () => {
         id: 6,
         type: 'positive',
         icon: <TrendingUp className="w-5 h-5" />,
-        title: `${athlete.currentStreak} DAY STREAK`,
-        message: 'Consistency is building champions. Keep the momentum.',
-        priority: 'LOW'
+        title: `${athlete.currentStreak} ${language === 'pt-BR' ? 'DIAS DE SEQUÊNCIA' : 'DAY STREAK'}`,
+        message: language === 'pt-BR'
+          ? 'Consistência está construindo campeões. Mantenha o ritmo.'
+          : 'Consistency is building champions. Keep the momentum.',
+        priority: t('insights.low')
       });
     }
     
@@ -91,9 +107,11 @@ const Insights = () => {
         id: 7,
         type: 'warning',
         icon: <Moon className="w-5 h-5" />,
-        title: 'SLEEP DISRUPTION',
-        message: 'Night waking detected. Check hydration and room temperature.',
-        priority: 'MEDIUM'
+        title: t('insights.sleepDisruption'),
+        message: language === 'pt-BR'
+          ? 'Despertar noturno detectado. Verifique hidratação e temperatura do quarto.'
+          : 'Night waking detected. Check hydration and room temperature.',
+        priority: t('insights.medium')
       });
     }
     
@@ -108,9 +126,14 @@ const Insights = () => {
     if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
       recs.push({
         id: 1,
-        category: 'COMBAT',
-        title: 'FIGHT DAY PROTOCOL',
-        items: [
+        category: language === 'pt-BR' ? 'COMBATE' : 'COMBAT',
+        title: language === 'pt-BR' ? 'PROTOCOLO DIA DE LUTA' : 'FIGHT DAY PROTOCOL',
+        items: language === 'pt-BR' ? [
+          'Aquecimento dinâmico: 15 minutos mínimo',
+          'Hidratação: 500ml antes, 250ml a cada 20 min',
+          'Pós-treino: Proteína em 30 minutos',
+          'Banho de gelo: 10 minutos para recuperação'
+        ] : [
           'Dynamic warm-up: 15 minutes minimum',
           'Hydration: 500ml before, 250ml every 20 min',
           'Post-training: Protein within 30 minutes',
@@ -123,9 +146,14 @@ const Insights = () => {
     if (dayOfWeek === 2 || dayOfWeek === 4) {
       recs.push({
         id: 2,
-        category: 'CONDITIONING',
-        title: 'ENDURANCE FOCUS',
-        items: [
+        category: language === 'pt-BR' ? 'CONDICIONAMENTO' : 'CONDITIONING',
+        title: language === 'pt-BR' ? 'FOCO EM RESISTÊNCIA' : 'ENDURANCE FOCUS',
+        items: language === 'pt-BR' ? [
+          'Zona de frequência cardíaca: 70-85% máx',
+          'Respiração: Nasal durante estado estável',
+          'Eletrólitos: Adicione sal à água',
+          'Mobilidade: 20 minutos pós-treino'
+        ] : [
           'Heart rate zone: 70-85% max',
           'Breathing: Nasal during steady state',
           'Electrolytes: Add salt to water',
@@ -137,9 +165,14 @@ const Insights = () => {
     // Nutrition Protocol
     recs.push({
       id: 3,
-      category: 'NUTRITION',
-      title: 'FIGHTER FUEL',
-      items: [
+      category: language === 'pt-BR' ? 'NUTRIÇÃO' : 'NUTRITION',
+      title: language === 'pt-BR' ? 'COMBUSTÍVEL DO LUTADOR' : 'FIGHTER FUEL',
+      items: language === 'pt-BR' ? [
+        'Pré-treino: Carboidratos complexos 2h antes',
+        'Durante: BCAAs ou água de coco',
+        'Pós: 30g proteína + 40g carboidratos',
+        'Noite: Caseína antes de dormir'
+      ] : [
         'Pre-training: Complex carbs 2h before',
         'During: BCAAs or coconut water',
         'Post: 30g protein + 40g carbs',
@@ -150,9 +183,14 @@ const Insights = () => {
     // Recovery Protocol
     recs.push({
       id: 4,
-      category: 'RECOVERY',
-      title: 'REGENERATION',
-      items: [
+      category: language === 'pt-BR' ? 'RECUPERAÇÃO' : 'RECOVERY',
+      title: language === 'pt-BR' ? 'REGENERAÇÃO' : 'REGENERATION',
+      items: language === 'pt-BR' ? [
+        'Meta de sono: 8-9 horas',
+        'Terapia fria: 3x por semana',
+        'Massagem/foam roll: Diário 15 min',
+        'Meditação: 10 min antes de dormir'
+      ] : [
         'Sleep target: 8-9 hours',
         'Cold therapy: 3x per week',
         'Massage/foam roll: Daily 15 min',
@@ -182,20 +220,36 @@ const Insights = () => {
   };
 
   const combatTips = [
-    { icon: '🥊', title: 'STRIKING', tip: 'Keep hands up, chin down' },
-    { icon: '🥋', title: 'GRAPPLING', tip: 'Position before submission' },
-    { icon: '🏃', title: 'CARDIO', tip: 'Control breathing rhythm' },
-    { icon: '🧠', title: 'MENTAL', tip: 'Visualize success daily' }
+    { 
+      icon: '🥊', 
+      title: language === 'pt-BR' ? 'STRIKING' : 'STRIKING', 
+      tip: language === 'pt-BR' ? 'Mãos altas, queixo baixo' : 'Keep hands up, chin down' 
+    },
+    { 
+      icon: '🥋', 
+      title: language === 'pt-BR' ? 'GRAPPLING' : 'GRAPPLING', 
+      tip: language === 'pt-BR' ? 'Posição antes de finalização' : 'Position before submission' 
+    },
+    { 
+      icon: '🏃', 
+      title: language === 'pt-BR' ? 'CARDIO' : 'CARDIO', 
+      tip: language === 'pt-BR' ? 'Controle o ritmo respiratório' : 'Control breathing rhythm' 
+    },
+    { 
+      icon: '🧠', 
+      title: 'MENTAL', 
+      tip: language === 'pt-BR' ? 'Visualize o sucesso diariamente' : 'Visualize success daily' 
+    }
   ];
 
   return (
-    <div className="min-h-screen bg-dark-900 pb-20">
+    <div className="min-h-screen bg-dark-900 pb-20 pt-16" style={{ backgroundColor: '#0a0a0a' }}>
       {/* Header */}
       <div className="bg-dark-800 border-b border-dark-700 safe-top">
         <div className="p-6">
-          <h1 className="text-3xl font-bebas tracking-wider text-white">FIGHT INTELLIGENCE</h1>
+          <h1 className="text-3xl font-bebas tracking-wider text-white">{t('insights.title')}</h1>
           <p className="text-steel-400 text-sm uppercase tracking-wide">
-            {format(new Date(), "EEEE, d MMM", { locale: ptBR })}
+            {format(new Date(), "EEEE, d MMM", { locale })}
           </p>
         </div>
       </div>
@@ -210,18 +264,18 @@ const Insights = () => {
           <div className="flex items-start gap-3">
             <Brain className="w-8 h-8 text-white" />
             <div className="flex-1">
-              <h3 className="text-xl font-bebas tracking-wider text-white mb-2">PERFORMANCE ANALYSIS</h3>
+              <h3 className="text-xl font-bebas tracking-wider text-white mb-2">{t('insights.performanceAnalysis')}</h3>
               <p className="text-blood-100 text-sm leading-relaxed uppercase">
-                Sleep: {todayData.sleepHours || 7}H ({todayData.sleepQuality || 'GOOD'}) | 
-                Energy: {todayData.energy || 70}% | 
-                Mental: {todayData.mood || 'FOCUSED'} | 
-                Pain: {todayData.pain || 'NONE'}
+                {language === 'pt-BR' ? 'SONO' : 'SLEEP'}: {todayData.sleepHours || 7}H ({t(`checkin.${todayData.sleepQuality}`) || t('checkin.good')}) | 
+                {language === 'pt-BR' ? ' ENERGIA' : ' ENERGY'}: {todayData.energy || 70}% | 
+                MENTAL: {t(`checkin.${todayData.mood}`) || t('checkin.focused')} | 
+                {language === 'pt-BR' ? ' DOR' : ' PAIN'}: {todayData.pain ? t(`checkin.${todayData.pain}`) : t('checkin.noPain')}
               </p>
               <div className="mt-3 pt-3 border-t border-blood-400/30">
                 <p className="text-white text-sm">
                   {todayData.energy > 70 
-                    ? 'SYSTEM STATUS: COMBAT READY. ENGAGE AT MAXIMUM INTENSITY.'
-                    : 'SYSTEM STATUS: RECOVERY MODE. ADJUST TRAINING VOLUME.'}
+                    ? t('insights.combatReady')
+                    : t('insights.recoveryMode')}
                 </p>
               </div>
             </div>
@@ -231,7 +285,7 @@ const Insights = () => {
         {/* Critical Insights */}
         <div className="space-y-3">
           <h3 className="font-bebas text-lg tracking-wider text-white">
-            <span className="text-blood-400">///</span> TACTICAL INSIGHTS
+            <span className="text-blood-400">///</span> {t('insights.tacticalInsights')}
           </h3>
           
           {insights.map((insight, index) => (
@@ -250,8 +304,8 @@ const Insights = () => {
                   <div className="flex items-center justify-between mb-1">
                     <h4 className="font-medium text-white uppercase tracking-wide">{insight.title}</h4>
                     <span className={`text-xs px-2 py-1 uppercase ${
-                      insight.priority === 'HIGH' ? 'bg-red-900/50 text-red-400 border border-red-600' :
-                      insight.priority === 'MEDIUM' ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-600' :
+                      insight.priority === t('insights.high') ? 'bg-red-900/50 text-red-400 border border-red-600' :
+                      insight.priority === t('insights.medium') ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-600' :
                       'bg-dark-700 text-steel-400 border border-dark-600'
                     }`}>
                       {insight.priority}
@@ -267,7 +321,7 @@ const Insights = () => {
         {/* Recommendations */}
         <div className="space-y-4">
           <h3 className="font-bebas text-lg tracking-wider text-white">
-            <span className="text-blood-400">///</span> BATTLE PROTOCOLS
+            <span className="text-blood-400">///</span> {t('insights.battleProtocols')}
           </h3>
           
           {recommendations.map((rec, index) => (
@@ -299,7 +353,7 @@ const Insights = () => {
         {/* Combat Tips Grid */}
         <div className="bg-dark-800 border border-dark-700 p-4">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> QUICK TACTICS
+            <span className="text-blood-400">///</span> {t('insights.quickTactics')}
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {combatTips.map((tip, index) => (
@@ -326,7 +380,9 @@ const Insights = () => {
           className="bg-dark-800 border-l-4 border-blood-600 p-6"
         >
           <p className="text-lg text-white italic mb-2">
-            "The fight is won or lost far away from witnesses - behind the lines, in the gym, and out there on the road, long before I dance under those lights."
+            {language === 'pt-BR' 
+              ? '"A luta é ganha ou perdida longe das testemunhas - atrás das linhas, na academia, e lá fora na estrada, muito antes de eu dançar sob aquelas luzes."'
+              : '"The fight is won or lost far away from witnesses - behind the lines, in the gym, and out there on the road, long before I dance under those lights."'}
           </p>
           <p className="text-sm text-blood-400 uppercase">- Muhammad Ali</p>
         </motion.div>

@@ -3,14 +3,18 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Award, Target, Activity, Zap, Flame } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import useStore from '../lib/store';
+import { useLanguage } from '../lib/LanguageContext';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import { format, subDays } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ptBR, enUS } from 'date-fns/locale';
 
 const Performance = () => {
   const { athlete, history } = useStore();
+  const { t, language } = useLanguage();
   const [selectedPeriod, setSelectedPeriod] = useState('week');
   const [performanceData, setPerformanceData] = useState([]);
+  
+  const locale = language === 'pt-BR' ? ptBR : enUS;
 
   useEffect(() => {
     const generatePerformanceData = () => {
@@ -22,7 +26,7 @@ const Performance = () => {
         );
         
         data.push({
-          day: format(date, 'EEE', { locale: ptBR }).toUpperCase(),
+          day: format(date, 'EEE', { locale }).toUpperCase(),
           date: format(date, 'dd/MM'),
           completed: dayData ? dayData.completedActivities.length : Math.floor(Math.random() * 6) + 1,
           energy: dayData?.energy || Math.floor(Math.random() * 40) + 60,
@@ -35,35 +39,35 @@ const Performance = () => {
     };
 
     setPerformanceData(generatePerformanceData());
-  }, [history]);
+  }, [history, locale]);
 
   const stats = [
     {
-      title: 'CURRENT STREAK',
+      title: t('performance.currentStreak'),
       value: athlete.currentStreak,
-      unit: 'DAYS',
+      unit: t('performance.days'),
       icon: <Flame className="w-5 h-5" />,
       change: '+2',
       color: 'text-orange-500'
     },
     {
-      title: 'BEST STREAK',
+      title: t('performance.bestStreak'),
       value: athlete.bestStreak,
-      unit: 'DAYS',
+      unit: t('performance.days'),
       icon: <Award className="w-5 h-5" />,
-      change: 'RECORD',
+      change: t('performance.record'),
       color: 'text-yellow-500'
     },
     {
-      title: 'TOTAL SESSIONS',
+      title: t('performance.totalSessions'),
       value: athlete.totalTrainingDays,
-      unit: 'DAYS',
+      unit: t('performance.days'),
       icon: <Target className="w-5 h-5" />,
       change: '+15',
       color: 'text-blood-400'
     },
     {
-      title: 'COMPLETION RATE',
+      title: t('performance.completionRate'),
       value: 87,
       unit: '%',
       icon: <Activity className="w-5 h-5" />,
@@ -73,29 +77,35 @@ const Performance = () => {
   ];
 
   const radarData = [
-    { skill: 'STRIKING', value: 85 },
-    { skill: 'GRAPPLING', value: 90 },
-    { skill: 'CARDIO', value: 75 },
-    { skill: 'STRENGTH', value: 80 },
-    { skill: 'FLEXIBILITY', value: 70 },
-    { skill: 'MENTAL', value: 88 }
+    { skill: t('performance.striking'), value: 85 },
+    { skill: t('performance.grappling'), value: 90 },
+    { skill: t('performance.cardio'), value: 75 },
+    { skill: t('performance.strength'), value: 80 },
+    { skill: t('performance.flexibility'), value: 70 },
+    { skill: t('performance.mental'), value: 88 }
   ];
 
   const weeklyGoals = [
-    { id: 1, title: 'Complete all MMA sessions', completed: true },
-    { id: 2, title: 'Maintain 7-day streak', completed: true },
-    { id: 3, title: '8 hours sleep average', completed: false },
-    { id: 4, title: 'No missed workouts', completed: true },
-    { id: 5, title: 'Weekend recovery session', completed: false }
+    { id: 1, title: language === 'pt-BR' ? 'Completar todas as sessões de MMA' : 'Complete all MMA sessions', completed: true },
+    { id: 2, title: language === 'pt-BR' ? 'Manter sequência de 7 dias' : 'Maintain 7-day streak', completed: true },
+    { id: 3, title: language === 'pt-BR' ? '8 horas de sono em média' : '8 hours sleep average', completed: false },
+    { id: 4, title: language === 'pt-BR' ? 'Nenhum treino perdido' : 'No missed workouts', completed: true },
+    { id: 5, title: language === 'pt-BR' ? 'Sessão de recuperação no fim de semana' : 'Weekend recovery session', completed: false }
   ];
 
+  const periodLabels = {
+    'week': t('performance.week'),
+    'month': t('performance.month'),
+    'year': t('performance.year')
+  };
+
   return (
-    <div className="min-h-screen bg-dark-900 pb-20">
+    <div className="min-h-screen bg-dark-900 pb-20 pt-16" style={{ backgroundColor: '#0a0a0a' }}>
       {/* Header */}
       <div className="bg-dark-800 border-b border-dark-700 safe-top">
         <div className="p-6">
-          <h1 className="text-3xl font-bebas tracking-wider text-white">PERFORMANCE METRICS</h1>
-          <p className="text-steel-400 text-sm uppercase tracking-wide">Track your evolution</p>
+          <h1 className="text-3xl font-bebas tracking-wider text-white">{t('performance.title')}</h1>
+          <p className="text-steel-400 text-sm uppercase tracking-wide">{t('performance.trackEvolution')}</p>
         </div>
       </div>
 
@@ -112,7 +122,7 @@ const Performance = () => {
                   : 'text-steel-400 hover:text-white'
               }`}
             >
-              {period}
+              {periodLabels[period]}
             </button>
           ))}
         </div>
@@ -143,7 +153,7 @@ const Performance = () => {
         {/* Performance Chart */}
         <div className="bg-dark-800 border border-dark-700 p-4">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> WEEKLY PERFORMANCE
+            <span className="text-blood-400">///</span> {t('performance.weeklyPerformance')}
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={performanceData}>
@@ -181,7 +191,7 @@ const Performance = () => {
         {/* Skills Radar */}
         <div className="bg-dark-800 border border-dark-700 p-4">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> COMBAT SKILLS
+            <span className="text-blood-400">///</span> {t('performance.combatSkills')}
           </h3>
           <ResponsiveContainer width="100%" height={250}>
             <RadarChart data={radarData}>
@@ -214,7 +224,7 @@ const Performance = () => {
         <div className="bg-dark-800 border border-dark-700 p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bebas text-lg tracking-wider text-white">
-              <span className="text-blood-400">///</span> WEEKLY OBJECTIVES
+              <span className="text-blood-400">///</span> {t('performance.weeklyObjectives')}
             </h3>
             <span className="text-sm text-blood-400 font-medium uppercase">
               {weeklyGoals.filter(g => g.completed).length}/{weeklyGoals.length}
@@ -252,19 +262,19 @@ const Performance = () => {
 
         {/* Fight Record */}
         <div className="bg-gradient-to-r from-blood-600 to-blood-500 p-6">
-          <h3 className="text-2xl font-bebas tracking-wider text-white mb-4">FIGHT RECORD</h3>
+          <h3 className="text-2xl font-bebas tracking-wider text-white mb-4">{t('performance.professionalRecord')}</h3>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <p className="text-3xl font-bebas text-white">{athlete.wins || 0}</p>
-              <p className="text-xs text-blood-100 uppercase tracking-wider">Wins</p>
+              <p className="text-xs text-blood-100 uppercase tracking-wider">{t('performance.wins')}</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bebas text-white">{athlete.losses || 0}</p>
-              <p className="text-xs text-blood-100 uppercase tracking-wider">Losses</p>
+              <p className="text-xs text-blood-100 uppercase tracking-wider">{t('performance.losses')}</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bebas text-white">{athlete.draws || 0}</p>
-              <p className="text-xs text-blood-100 uppercase tracking-wider">Draws</p>
+              <p className="text-xs text-blood-100 uppercase tracking-wider">{t('performance.draws')}</p>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { User, Trophy, Flame, Target, Shield, Settings, Power, Edit3, Camera, Award, TrendingUp, Swords, ChevronRight } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import useStore from '../lib/store';
+import { useLanguage } from '../lib/LanguageContext';
 import Image from 'next/image';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -10,33 +11,34 @@ import toast from 'react-hot-toast';
 
 const Profile = () => {
   const { athlete, resetDay } = useStore();
+  const { t, language } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState(athlete);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
   const achievements = [
-    { id: 1, icon: '🏆', title: '7 DAY WARRIOR', unlocked: athlete.currentStreak >= 7 },
-    { id: 2, icon: '🔥', title: '30 DAY BEAST', unlocked: athlete.bestStreak >= 30 },
-    { id: 3, icon: '💀', title: '100 BATTLES', unlocked: athlete.totalTrainingDays >= 100 },
-    { id: 4, icon: '🥋', title: 'GROUND MASTER', unlocked: false },
-    { id: 5, icon: '🥊', title: 'STRIKER ELITE', unlocked: false },
-    { id: 6, icon: '⚔️', title: 'UNBREAKABLE', unlocked: athlete.currentStreak >= 14 },
-    { id: 7, icon: '🛡️', title: 'IRON DEFENSE', unlocked: false },
-    { id: 8, icon: '👑', title: 'CHAMPION', unlocked: false },
+    { id: 1, icon: '🏆', title: t('achievement.7dayWarrior'), unlocked: athlete.currentStreak >= 7 },
+    { id: 2, icon: '🔥', title: t('achievement.30dayBeast'), unlocked: athlete.bestStreak >= 30 },
+    { id: 3, icon: '💀', title: t('achievement.100battles'), unlocked: athlete.totalTrainingDays >= 100 },
+    { id: 4, icon: '🥋', title: t('achievement.groundMaster'), unlocked: false },
+    { id: 5, icon: '🥊', title: t('achievement.strikerElite'), unlocked: false },
+    { id: 6, icon: '⚔️', title: t('achievement.unbreakable'), unlocked: athlete.currentStreak >= 14 },
+    { id: 7, icon: '🛡️', title: t('achievement.ironDefense'), unlocked: false },
+    { id: 8, icon: '👑', title: t('achievement.champion'), unlocked: false },
   ];
 
   const stats = [
-    { label: 'AGE', value: `${athlete.age}`, icon: <User className="w-4 h-4" /> },
-    { label: 'LEVEL', value: athlete.level, icon: <Award className="w-4 h-4" /> },
-    { label: 'STREAK', value: `${athlete.currentStreak}`, icon: <Flame className="w-4 h-4" /> },
-    { label: 'RECORD', value: `${athlete.bestStreak}`, icon: <Trophy className="w-4 h-4" /> },
-    { label: 'SESSIONS', value: athlete.totalTrainingDays, icon: <Target className="w-4 h-4" /> },
-    { label: 'WIN RATE', value: '87%', icon: <TrendingUp className="w-4 h-4" /> },
+    { label: t('profile.age'), value: `${athlete.age}`, icon: <User className="w-4 h-4" /> },
+    { label: t('profile.level'), value: athlete.level, icon: <Award className="w-4 h-4" /> },
+    { label: t('profile.streak'), value: `${athlete.currentStreak}`, icon: <Flame className="w-4 h-4" /> },
+    { label: t('profile.record'), value: `${athlete.bestStreak}`, icon: <Trophy className="w-4 h-4" /> },
+    { label: t('profile.sessions'), value: athlete.totalTrainingDays, icon: <Target className="w-4 h-4" /> },
+    { label: t('profile.winRate'), value: '87%', icon: <TrendingUp className="w-4 h-4" /> },
   ];
 
   const handleSaveProfile = () => {
     setIsEditing(false);
-    toast.success('PROFILE UPDATED', {
+    toast.success(language === 'pt-BR' ? 'PERFIL ATUALIZADO' : 'PROFILE UPDATED', {
       style: {
         background: '#1a1a1a',
         color: '#DC143C',
@@ -46,10 +48,14 @@ const Profile = () => {
   };
 
   const handleResetApp = () => {
-    if (window.confirm('RESET ALL DATA? THIS CANNOT BE UNDONE.')) {
+    const confirmMessage = language === 'pt-BR' 
+      ? 'RESETAR TODOS OS DADOS? ISSO NÃO PODE SER DESFEITO.'
+      : 'RESET ALL DATA? THIS CANNOT BE UNDONE.';
+      
+    if (window.confirm(confirmMessage)) {
       localStorage.clear();
       resetDay();
-      toast.success('APP RESET COMPLETE', {
+      toast.success(language === 'pt-BR' ? 'APP RESETADO' : 'APP RESET COMPLETE', {
         style: {
           background: '#1a1a1a',
           color: '#DC143C',
@@ -63,12 +69,12 @@ const Profile = () => {
   const overallProgress = Math.round((athlete.totalTrainingDays / 365) * 100);
 
   return (
-    <div className="min-h-screen bg-dark-900 pb-20">
+    <div className="min-h-screen bg-dark-900 pb-20 pt-16" style={{ backgroundColor: '#0a0a0a' }}>
       {/* Header with Profile */}
       <div className="bg-dark-800 border-b border-dark-700 safe-top">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bebas tracking-wider text-white">FIGHTER PROFILE</h1>
+            <h1 className="text-3xl font-bebas tracking-wider text-white">{t('profile.title')}</h1>
             <button
               onClick={() => setIsEditing(!isEditing)}
               className="p-2 bg-dark-700 border border-dark-600 hover:border-blood-600 transition-colors"
@@ -111,7 +117,7 @@ const Profile = () => {
                   <h2 className="text-3xl font-bebas tracking-wider text-white mb-1">{athlete.name}</h2>
                 )}
                 <p className="text-blood-400 font-russo text-sm uppercase">{athlete.category}</p>
-                <p className="text-steel-400 text-sm">{athlete.age} YEARS • {athlete.level}</p>
+                <p className="text-steel-400 text-sm">{athlete.age} {t('profile.years')} • {athlete.level}</p>
                 
                 <div className="flex gap-6 mt-3">
                   <div className="flex items-center gap-1">
@@ -136,13 +142,13 @@ const Profile = () => {
                   onClick={handleSaveProfile}
                   className="flex-1 bg-blood-600 text-white py-2 font-medium uppercase tracking-wider hover:bg-blood-500"
                 >
-                  SAVE
+                  {t('profile.save')}
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
                   className="flex-1 bg-dark-600 text-steel-400 py-2 font-medium uppercase tracking-wider hover:text-white"
                 >
-                  CANCEL
+                  {t('profile.cancel')}
                 </button>
               </div>
             )}
@@ -154,7 +160,7 @@ const Profile = () => {
         {/* Annual Progress */}
         <div className="bg-dark-800 border border-dark-700 p-6">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> ANNUAL PROGRESS
+            <span className="text-blood-400">///</span> {t('profile.annualProgress')}
           </h3>
           <div className="flex items-center gap-6">
             <div className="w-32 h-32">
@@ -171,16 +177,16 @@ const Profile = () => {
             </div>
             <div className="flex-1">
               <p className="text-steel-400 text-sm mb-3 uppercase">
-                {athlete.totalTrainingDays} TRAINING DAYS COMPLETED
+                {athlete.totalTrainingDays} {t('profile.trainingDaysCompleted')}
               </p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-steel-400 uppercase">Target:</span>
-                  <span className="font-medium text-white">365 DAYS</span>
+                  <span className="text-steel-400 uppercase">{t('profile.target')}:</span>
+                  <span className="font-medium text-white">365 {t('profile.days')}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-steel-400 uppercase">Remaining:</span>
-                  <span className="font-medium text-blood-400">{365 - athlete.totalTrainingDays} DAYS</span>
+                  <span className="text-steel-400 uppercase">{t('profile.remaining')}:</span>
+                  <span className="font-medium text-blood-400">{365 - athlete.totalTrainingDays} {t('profile.days')}</span>
                 </div>
               </div>
             </div>
@@ -190,7 +196,7 @@ const Profile = () => {
         {/* Combat Stats */}
         <div className="bg-dark-800 border border-dark-700 p-4">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> COMBAT STATISTICS
+            <span className="text-blood-400">///</span> {t('profile.combatStatistics')}
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {stats.map((stat, index) => (
@@ -214,7 +220,7 @@ const Profile = () => {
         {/* Achievements */}
         <div className="bg-dark-800 border border-dark-700 p-4">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> ACHIEVEMENTS
+            <span className="text-blood-400">///</span> {t('profile.achievements')}
           </h3>
           <div className="grid grid-cols-4 gap-3">
             {achievements.map((achievement) => (
@@ -236,19 +242,19 @@ const Profile = () => {
 
         {/* Fight Record */}
         <div className="bg-gradient-to-r from-blood-600 to-blood-500 p-6">
-          <h3 className="text-2xl font-bebas tracking-wider text-white mb-4">PROFESSIONAL RECORD</h3>
+          <h3 className="text-2xl font-bebas tracking-wider text-white mb-4">{t('performance.professionalRecord')}</h3>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <p className="text-4xl font-bebas text-white">{athlete.wins || 0}</p>
-              <p className="text-xs text-blood-100 uppercase tracking-wider">WINS</p>
+              <p className="text-xs text-blood-100 uppercase tracking-wider">{t('performance.wins')}</p>
             </div>
             <div className="text-center">
               <p className="text-4xl font-bebas text-white">{athlete.losses || 0}</p>
-              <p className="text-xs text-blood-100 uppercase tracking-wider">LOSSES</p>
+              <p className="text-xs text-blood-100 uppercase tracking-wider">{t('performance.losses')}</p>
             </div>
             <div className="text-center">
               <p className="text-4xl font-bebas text-white">{athlete.draws || 0}</p>
-              <p className="text-xs text-blood-100 uppercase tracking-wider">DRAWS</p>
+              <p className="text-xs text-blood-100 uppercase tracking-wider">{t('performance.draws')}</p>
             </div>
           </div>
         </div>
@@ -256,13 +262,13 @@ const Profile = () => {
         {/* Settings */}
         <div className="bg-dark-800 border border-dark-700 p-4">
           <h3 className="font-bebas text-lg tracking-wider text-white mb-4">
-            <span className="text-blood-400">///</span> SYSTEM SETTINGS
+            <span className="text-blood-400">///</span> {t('profile.systemSettings')}
           </h3>
           <div className="space-y-2">
             <button className="w-full flex items-center justify-between p-3 hover:bg-dark-700 transition-colors">
               <div className="flex items-center gap-3">
                 <Settings className="w-5 h-5 text-steel-400" />
-                <span className="text-steel-400 uppercase">Preferences</span>
+                <span className="text-steel-400 uppercase">{t('profile.preferences')}</span>
               </div>
               <ChevronRight className="w-5 h-5 text-steel-600" />
             </button>
@@ -270,7 +276,7 @@ const Profile = () => {
             <button className="w-full flex items-center justify-between p-3 hover:bg-dark-700 transition-colors">
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-steel-400" />
-                <span className="text-steel-400 uppercase">Privacy</span>
+                <span className="text-steel-400 uppercase">{t('profile.privacy')}</span>
               </div>
               <ChevronRight className="w-5 h-5 text-steel-600" />
             </button>
@@ -281,7 +287,7 @@ const Profile = () => {
             >
               <div className="flex items-center gap-3">
                 <Power className="w-5 h-5 text-red-600" />
-                <span className="text-red-600 uppercase">Reset System</span>
+                <span className="text-red-600 uppercase">{t('profile.resetSystem')}</span>
               </div>
             </button>
           </div>
@@ -293,10 +299,9 @@ const Profile = () => {
           animate={{ opacity: 1 }}
           className="bg-dark-800 border-l-4 border-blood-600 p-6"
         >
-          <h3 className="text-xl font-bebas tracking-wider text-white mb-2">WARRIOR MINDSET</h3>
+          <h3 className="text-xl font-bebas tracking-wider text-white mb-2">{t('profile.warriorMindset')}</h3>
           <p className="text-steel-400 text-sm uppercase">
-            Every champion was once a contender who refused to give up.
-            Keep grinding. Keep fighting. Become legendary.
+            {t('profile.everyChampion')}
           </p>
         </motion.div>
       </div>
