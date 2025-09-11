@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Home, TrendingUp, Brain, User } from 'lucide-react';
+import { Home, TrendingUp, Brain, User, Lock } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
@@ -10,6 +10,7 @@ const Navigation = () => {
   const navItems = [
     { id: 'home', label: t('nav.dashboard'), icon: Home, path: '/' },
     { id: 'performance', label: t('nav.stats'), icon: TrendingUp, path: '/performance' },
+    { id: 'secrets', label: t('nav.secrets'), icon: Lock, path: '/secrets' },
     { id: 'insights', label: t('nav.analysis'), icon: Brain, path: '/insights' },
     { id: 'profile', label: t('nav.fighter'), icon: User, path: '/profile' },
   ];
@@ -23,7 +24,7 @@ const Navigation = () => {
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-dark-800 border-t border-dark-700 safe-bottom">
-        <div className="grid grid-cols-4 max-w-lg mx-auto">
+        <div className="grid grid-cols-5 max-w-lg mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = router.pathname === item.path;
