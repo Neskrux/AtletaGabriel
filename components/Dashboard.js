@@ -2,16 +2,20 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Clock, MapPin, Flame, Target, Activity, Zap } from 'lucide-react';
 import useStore from '../lib/store';
+import { useLanguage } from '../lib/LanguageContext';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ptBR, enUS } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { athlete, todayData, weeklySchedule, toggleActivity } = useStore();
+  const { t, language } = useLanguage();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [todayActivities, setTodayActivities] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
+
+  const locale = language === 'pt-BR' ? ptBR : enUS;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -31,7 +35,7 @@ const Dashboard = () => {
     const activity = todayActivities.find(a => a.id === activityId);
     
     if (todayData.completedActivities.includes(activityId)) {
-      toast.error(`${activity.title} UNMARKED`, {
+      toast.error(`${getActivityTitle(activity.id)} UNMARKED`, {
         style: {
           background: '#1a1a1a',
           color: '#fff',
@@ -39,7 +43,7 @@ const Dashboard = () => {
         },
       });
     } else {
-      toast.success(`${activity.title} COMPLETED!`, {
+      toast.success(`${getActivityTitle(activity.id)} ${t('dashboard.completed')}!`, {
         style: {
           background: '#1a1a1a',
           color: '#DC143C',
@@ -51,6 +55,27 @@ const Dashboard = () => {
         },
       });
     }
+  };
+
+  const getActivityTitle = (activityId) => {
+    const activityKeys = {
+      'wake': 'activity.wakeUp',
+      'mma': 'activity.mmaTraining',
+      'bjj': 'activity.jiuJitsu',
+      'lunch': 'activity.nutrition',
+      'gym': 'activity.strengthTraining',
+      'study': 'activity.studySession',
+      'morning_training': 'activity.morningDrill',
+      'afternoon_training': 'activity.afternoonSession',
+      'english': 'activity.englishClass',
+      'training': 'activity.openMat',
+      'recovery': 'activity.recovery',
+    };
+    return t(activityKeys[activityId] || activityId);
+  };
+
+  const getIntensityLabel = (intensity) => {
+    return t(`intensity.${intensity}` || intensity);
   };
 
   const completionRate = todayActivities.length > 0 
@@ -80,7 +105,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-900 pb-20">
+    <div className="min-h-screen bg-dark-900 pb-20 pt-16">
       {/* Header */}
       <div className="bg-dark-800 border-b border-dark-700 safe-top">
         <div className="p-6">
@@ -90,7 +115,7 @@ const Dashboard = () => {
                 {format(currentTime, 'HH:mm')}
               </h1>
               <p className="text-steel-400 text-sm uppercase tracking-wide">
-                {format(currentTime, "EEEE, d MMM", { locale: ptBR })}
+                {format(currentTime, "EEEE, d MMM", { locale })}
               </p>
             </div>
             <div className="relative w-20 h-20">
@@ -113,25 +138,25 @@ const Dashboard = () => {
             <div className="bg-dark-700 border border-dark-600 p-3">
               <Flame className="w-4 h-4 text-blood-400 mb-1" />
               <p className="text-xl font-bebas text-white">{athlete.currentStreak}</p>
-              <p className="text-xs text-steel-400 uppercase">Streak</p>
+              <p className="text-xs text-steel-400 uppercase">{t('dashboard.streak')}</p>
             </div>
             
             <div className="bg-dark-700 border border-dark-600 p-3">
               <Target className="w-4 h-4 text-blood-400 mb-1" />
               <p className="text-xl font-bebas text-white">{Math.round(completionRate)}%</p>
-              <p className="text-xs text-steel-400 uppercase">Today</p>
+              <p className="text-xs text-steel-400 uppercase">{t('dashboard.today')}</p>
             </div>
             
             <div className="bg-dark-700 border border-dark-600 p-3">
               <Activity className="w-4 h-4 text-blood-400 mb-1" />
               <p className="text-xl font-bebas text-white">{todayData.energy || 0}%</p>
-              <p className="text-xs text-steel-400 uppercase">Energy</p>
+              <p className="text-xs text-steel-400 uppercase">{t('dashboard.energy')}</p>
             </div>
             
             <div className="bg-dark-700 border border-dark-600 p-3">
               <Zap className="w-4 h-4 text-blood-400 mb-1" />
               <p className="text-xl font-bebas text-white">{athlete.totalTrainingDays}</p>
-              <p className="text-xs text-steel-400 uppercase">Total</p>
+              <p className="text-xs text-steel-400 uppercase">{t('dashboard.total')}</p>
             </div>
           </div>
         </div>
@@ -147,7 +172,7 @@ const Dashboard = () => {
             />
           </div>
           <p className="text-xs text-steel-400 mt-1 uppercase tracking-wide">
-            {todayData.completedActivities.length}/{todayActivities.length} COMPLETED
+            {todayData.completedActivities.length}/{todayActivities.length} {t('dashboard.completed')}
           </p>
         </div>
       </div>
@@ -155,7 +180,7 @@ const Dashboard = () => {
       {/* Today's Activities */}
       <div className="p-4">
         <h2 className="text-xl font-bebas tracking-wider text-white mb-4 flex items-center gap-2">
-          <span className="text-blood-400">///</span> TODAY'S MISSION
+          <span className="text-blood-400">///</span> {t('dashboard.todayMission')}
         </h2>
 
         <div className="space-y-3">
@@ -191,7 +216,7 @@ const Dashboard = () => {
                         <h3 className={`font-bebas text-xl tracking-wider ${
                           isCompleted ? 'text-steel-600 line-through' : 'text-white'
                         }`}>
-                          {activity.title}
+                          {getActivityTitle(activity.id)}
                         </h3>
                       </div>
                       
@@ -212,7 +237,7 @@ const Dashboard = () => {
                   </div>
 
                   <div className={`px-3 py-1 border text-xs font-medium uppercase ${getIntensityColor(activity.intensity)}`}>
-                    {activity.intensity}
+                    {getIntensityLabel(activity.intensity)}
                   </div>
                 </div>
               </motion.div>
@@ -224,40 +249,40 @@ const Dashboard = () => {
         {todayData.sleepQuality && (
           <div className="mt-6 bg-dark-800 border border-dark-700 p-4">
             <h3 className="font-bebas text-lg tracking-wider text-white mb-3 flex items-center gap-2">
-              <span className="text-blood-400">///</span> MORNING REPORT
+              <span className="text-blood-400">///</span> {t('dashboard.morningReport')}
             </h3>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-dark-700 p-3">
-                <p className="text-xs text-steel-400 uppercase">Wake Time</p>
+                <p className="text-xs text-steel-400 uppercase">{t('dashboard.wakeTime')}</p>
                 <p className="font-bebas text-xl text-blood-400">{todayData.wakeUpTime || '--:--'}</p>
               </div>
               
               <div className="bg-dark-700 p-3">
-                <p className="text-xs text-steel-400 uppercase">Sleep</p>
+                <p className="text-xs text-steel-400 uppercase">{t('dashboard.sleep')}</p>
                 <p className="font-bebas text-xl text-blood-400">{todayData.sleepHours || 0}H</p>
               </div>
               
               <div className="bg-dark-700 p-3">
-                <p className="text-xs text-steel-400 uppercase">Mental</p>
-                <p className="font-bebas text-xl text-blood-400 uppercase">{todayData.mood || 'N/A'}</p>
+                <p className="text-xs text-steel-400 uppercase">{t('dashboard.mental')}</p>
+                <p className="font-bebas text-xl text-blood-400 uppercase">{t(`checkin.${todayData.mood}`) || 'N/A'}</p>
               </div>
               
               <div className="bg-dark-700 p-3">
-                <p className="text-xs text-steel-400 uppercase">Pain Level</p>
-                <p className="font-bebas text-xl text-blood-400 uppercase">{todayData.pain || 'NONE'}</p>
+                <p className="text-xs text-steel-400 uppercase">{t('dashboard.painLevel')}</p>
+                <p className="font-bebas text-xl text-blood-400 uppercase">{todayData.pain ? t(`checkin.${todayData.pain}`) : t('dashboard.none')}</p>
               </div>
             </div>
 
             {todayData.weight && (
               <div className="mt-3 flex gap-3">
                 <div className="flex-1 bg-dark-700 p-3">
-                  <p className="text-xs text-steel-400 uppercase">Weight</p>
+                  <p className="text-xs text-steel-400 uppercase">{t('dashboard.weight')}</p>
                   <p className="font-bebas text-xl text-blood-400">{todayData.weight} KG</p>
                 </div>
                 {todayData.heartRate && (
                   <div className="flex-1 bg-dark-700 p-3">
-                    <p className="text-xs text-steel-400 uppercase">Heart Rate</p>
+                    <p className="text-xs text-steel-400 uppercase">{t('dashboard.heartRate')}</p>
                     <p className="font-bebas text-xl text-blood-400">{todayData.heartRate} BPM</p>
                   </div>
                 )}
@@ -279,9 +304,9 @@ const Dashboard = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="mt-6 bg-gradient-to-r from-blood-600 to-blood-500 p-6"
           >
-            <h3 className="text-2xl font-bebas tracking-wider text-white">MISSION COMPLETE!</h3>
+            <h3 className="text-2xl font-bebas tracking-wider text-white">{t('dashboard.missionComplete')}</h3>
             <p className="text-blood-100 mt-2 uppercase text-sm">
-              You dominated today. Rest, recover, and come back stronger.
+              {t('dashboard.missionCompleteDesc')}
             </p>
           </motion.div>
         )}

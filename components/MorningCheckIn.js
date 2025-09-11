@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Activity, Moon, Battery, Brain, AlertTriangle, Clock } from 'lucide-react';
 import useStore from '../lib/store';
+import { useLanguage } from '../lib/LanguageContext';
+import LanguageSelector from './LanguageSelector';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 
 const MorningCheckIn = () => {
   const { updateTodayData, athlete, completeCheckIn } = useStore();
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({
     wakeUpTime: '',
@@ -26,57 +29,57 @@ const MorningCheckIn = () => {
   const steps = [
     {
       id: 'welcome',
-      title: 'WARRIOR CHECK-IN',
-      subtitle: 'TIME TO DOMINATE',
+      title: t('checkin.warriorCheckin'),
+      subtitle: t('checkin.timeToDominate'),
       type: 'intro'
     },
     {
       id: 'wakeUpTime',
-      title: 'WAKE UP TIME',
-      subtitle: 'Discipline starts with consistency',
+      title: t('checkin.wakeUpTime'),
+      subtitle: t('checkin.disciplineConsistency'),
       type: 'time'
     },
     {
       id: 'sleep',
-      title: 'SLEEP ANALYSIS',
-      subtitle: 'Recovery is crucial for performance',
+      title: t('checkin.sleepAnalysis'),
+      subtitle: t('checkin.recoveryPerformance'),
       type: 'sleep'
     },
     {
       id: 'energy',
-      title: 'ENERGY LEVEL',
-      subtitle: 'Rate your current energy',
+      title: t('checkin.energyLevel'),
+      subtitle: t('checkin.rateEnergy'),
       type: 'slider'
     },
     {
       id: 'mood',
-      title: 'MENTAL STATE',
-      subtitle: 'Mind controls the body',
+      title: t('checkin.mentalState'),
+      subtitle: t('checkin.mindControlsBody'),
       type: 'choice',
       options: [
-        { value: 'focused', label: 'FOCUSED', color: 'border-green-500 text-green-500' },
-        { value: 'motivated', label: 'MOTIVATED', color: 'border-blood-400 text-blood-400' },
-        { value: 'neutral', label: 'NEUTRAL', color: 'border-steel-400 text-steel-400' },
-        { value: 'tired', label: 'TIRED', color: 'border-yellow-600 text-yellow-600' },
-        { value: 'stressed', label: 'STRESSED', color: 'border-orange-600 text-orange-600' }
+        { value: 'focused', label: t('checkin.focused'), color: 'border-green-500 text-green-500' },
+        { value: 'motivated', label: t('checkin.motivated'), color: 'border-blood-400 text-blood-400' },
+        { value: 'neutral', label: t('checkin.neutral'), color: 'border-steel-400 text-steel-400' },
+        { value: 'tired', label: t('checkin.tired'), color: 'border-yellow-600 text-yellow-600' },
+        { value: 'stressed', label: t('checkin.stressed'), color: 'border-orange-600 text-orange-600' }
       ]
     },
     {
       id: 'pain',
-      title: 'PAIN CHECK',
-      subtitle: 'Any injuries or discomfort?',
+      title: t('checkin.painCheck'),
+      subtitle: t('checkin.anyInjuries'),
       type: 'choice',
       options: [
-        { value: 'none', label: 'NO PAIN', color: 'border-green-500 text-green-500' },
-        { value: 'mild', label: 'MILD', color: 'border-yellow-600 text-yellow-600' },
-        { value: 'moderate', label: 'MODERATE', color: 'border-orange-600 text-orange-600' },
-        { value: 'severe', label: 'SEVERE', color: 'border-red-600 text-red-600' }
+        { value: 'none', label: t('checkin.noPain'), color: 'border-green-500 text-green-500' },
+        { value: 'mild', label: t('checkin.mild'), color: 'border-yellow-600 text-yellow-600' },
+        { value: 'moderate', label: t('checkin.moderate'), color: 'border-orange-600 text-orange-600' },
+        { value: 'severe', label: t('checkin.severe'), color: 'border-red-600 text-red-600' }
       ]
     },
     {
       id: 'metrics',
-      title: 'BODY METRICS',
-      subtitle: 'Track your physical state',
+      title: t('checkin.bodyMetrics'),
+      subtitle: t('checkin.trackPhysical'),
       type: 'metrics'
     }
   ];
@@ -109,7 +112,12 @@ const MorningCheckIn = () => {
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <div className="min-h-screen bg-dark-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-dark-900 flex items-center justify-center p-4" style={{ backgroundColor: '#0a0a0a' }}>
+      {/* Language Selector - Fixed Top Right */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSelector />
+      </div>
+
       <div className="w-full max-w-md">
         {/* Progress Bar */}
         <div className="mb-8">
@@ -122,7 +130,7 @@ const MorningCheckIn = () => {
             />
           </div>
           <p className="text-steel-400 text-xs mt-2 text-center font-mono">
-            STEP {currentStep + 1}/{steps.length}
+            {t('checkin.step')} {currentStep + 1}/{steps.length}
           </p>
         </div>
 
@@ -163,15 +171,15 @@ const MorningCheckIn = () => {
                   <div className="flex justify-center gap-6 mt-4">
                     <div>
                       <span className="text-2xl font-bebas text-blood-400">{athlete.currentStreak}</span>
-                      <p className="text-xs text-steel-400 uppercase">Streak</p>
+                      <p className="text-xs text-steel-400 uppercase">{t('dashboard.streak')}</p>
                     </div>
                     <div>
                       <span className="text-2xl font-bebas text-blood-400">{athlete.totalTrainingDays}</span>
-                      <p className="text-xs text-steel-400 uppercase">Sessions</p>
+                      <p className="text-xs text-steel-400 uppercase">{t('profile.sessions')}</p>
                     </div>
                     <div>
                       <span className="text-2xl font-bebas text-blood-400">{athlete.wins || 0}</span>
-                      <p className="text-xs text-steel-400 uppercase">Wins</p>
+                      <p className="text-xs text-steel-400 uppercase">{t('performance.wins')}</p>
                     </div>
                   </div>
                 </div>
@@ -193,7 +201,7 @@ const MorningCheckIn = () => {
               <div className="space-y-6">
                 <div>
                   <label className="text-steel-400 text-xs uppercase tracking-wide mb-2 block">
-                    Hours of Sleep
+                    {t('checkin.hoursOfSleep')}
                   </label>
                   <div className="flex items-center gap-4">
                     <input
@@ -213,7 +221,7 @@ const MorningCheckIn = () => {
 
                 <div>
                   <label className="text-steel-400 text-xs uppercase tracking-wide mb-3 block">
-                    Sleep Quality
+                    {t('checkin.sleepQuality')}
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     {['poor', 'fair', 'good', 'excellent'].map(quality => (
@@ -226,7 +234,7 @@ const MorningCheckIn = () => {
                             : 'bg-dark-700 border-dark-600 text-steel-400 hover:border-blood-600'
                         }`}
                       >
-                        {quality}
+                        {t(`checkin.${quality}`)}
                       </button>
                     ))}
                   </div>
@@ -241,7 +249,7 @@ const MorningCheckIn = () => {
                         : 'bg-dark-700 border-dark-600 text-steel-400'
                     }`}
                   >
-                    Had Dreams
+                    {t('checkin.hadDreams')}
                   </button>
                   <button
                     onClick={() => handleAnswer('wokeUpAtNight', !answers.wokeUpAtNight)}
@@ -251,7 +259,7 @@ const MorningCheckIn = () => {
                         : 'bg-dark-700 border-dark-600 text-steel-400'
                     }`}
                   >
-                    Woke at Night
+                    {t('checkin.wokeAtNight')}
                   </button>
                 </div>
               </div>
@@ -272,8 +280,8 @@ const MorningCheckIn = () => {
                   className="w-full accent-blood-400"
                 />
                 <div className="flex justify-between text-xs text-steel-400 uppercase">
-                  <span>Empty</span>
-                  <span>Ready to Fight</span>
+                  <span>{t('checkin.empty')}</span>
+                  <span>{t('checkin.readyToFight')}</span>
                 </div>
               </div>
             )}
@@ -300,7 +308,7 @@ const MorningCheckIn = () => {
               <div className="space-y-4">
                 <div>
                   <label className="text-steel-400 text-xs uppercase tracking-wide mb-2 block">
-                    Current Weight (kg)
+                    {t('checkin.currentWeight')}
                   </label>
                   <input
                     type="number"
@@ -308,33 +316,33 @@ const MorningCheckIn = () => {
                     className="w-full px-4 py-3 bg-dark-700 border border-dark-600 text-white focus:border-blood-400 focus:outline-none"
                     value={answers.weight}
                     onChange={(e) => handleAnswer('weight', e.target.value)}
-                    placeholder="Optional"
+                    placeholder={t('checkin.optional')}
                   />
                 </div>
                 
                 <div>
                   <label className="text-steel-400 text-xs uppercase tracking-wide mb-2 block">
-                    Resting Heart Rate (bpm)
+                    {t('checkin.restingHeartRate')}
                   </label>
                   <input
                     type="number"
                     className="w-full px-4 py-3 bg-dark-700 border border-dark-600 text-white focus:border-blood-400 focus:outline-none"
                     value={answers.heartRate}
                     onChange={(e) => handleAnswer('heartRate', e.target.value)}
-                    placeholder="Optional"
+                    placeholder={t('checkin.optional')}
                   />
                 </div>
 
                 <div>
                   <label className="text-steel-400 text-xs uppercase tracking-wide mb-2 block">
-                    Notes
+                    {t('checkin.notes')}
                   </label>
                   <textarea
                     className="w-full px-4 py-3 bg-dark-700 border border-dark-600 text-white focus:border-blood-400 focus:outline-none resize-none"
                     value={answers.notes}
                     onChange={(e) => handleAnswer('notes', e.target.value)}
                     rows={3}
-                    placeholder="Any observations..."
+                    placeholder={t('checkin.anyObservations')}
                   />
                 </div>
               </div>
@@ -350,7 +358,7 @@ const MorningCheckIn = () => {
               onClick={handleNext}
               disabled={currentStepData.type === 'time' && !answers.wakeUpTime}
             >
-              {currentStep === steps.length - 1 ? 'COMPLETE CHECK-IN' : 'NEXT'}
+              {currentStep === steps.length - 1 ? t('checkin.complete') : t('checkin.next')}
               <ChevronRight className="w-5 h-5" />
             </button>
           </motion.div>
