@@ -86,11 +86,11 @@ const Performance = () => {
   ];
 
   const weeklyGoals = [
-    { id: 1, title: language === 'pt-BR' ? 'Completar todas as sessões de MMA' : 'Complete all MMA sessions', completed: true },
-    { id: 2, title: language === 'pt-BR' ? 'Manter sequência de 7 dias' : 'Maintain 7-day streak', completed: true },
-    { id: 3, title: language === 'pt-BR' ? '8 horas de sono em média' : '8 hours sleep average', completed: false },
-    { id: 4, title: language === 'pt-BR' ? 'Nenhum treino perdido' : 'No missed workouts', completed: true },
-    { id: 5, title: language === 'pt-BR' ? 'Sessão de recuperação no fim de semana' : 'Weekend recovery session', completed: false }
+    { id: 1, title: 'Completar todas as sessões de MMA', completed: true },
+    { id: 2, title: 'Manter sequência de 7 dias', completed: true },
+    { id: 3, title: '8 horas de sono em média', completed: false },
+    { id: 4, title: 'Nenhum treino perdido', completed: true },
+    { id: 5, title: 'Sessão de recuperação no fim de semana', completed: false }
   ];
 
   const periodLabels = {

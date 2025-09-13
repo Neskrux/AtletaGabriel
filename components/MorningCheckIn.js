@@ -19,6 +19,7 @@ const MorningCheckIn = () => {
     mood: '',
     energy: 50,
     pain: '',
+    painLocation: '',
     hadDreams: false,
     wokeUpAtNight: false,
     notes: '',
@@ -77,6 +78,27 @@ const MorningCheckIn = () => {
       ]
     },
     {
+      id: 'painLocation',
+      title: t('checkin.whereIsPain'),
+      subtitle: t('checkin.selectPainLocation'),
+      type: 'choice',
+      condition: () => answers.pain && answers.pain !== 'none',
+      options: [
+        { value: 'head', label: t('checkin.head'), color: 'border-red-400 text-red-400' },
+        { value: 'neck', label: t('checkin.neck'), color: 'border-red-400 text-red-400' },
+        { value: 'shoulder', label: t('checkin.shoulder'), color: 'border-red-400 text-red-400' },
+        { value: 'arm', label: t('checkin.arm'), color: 'border-red-400 text-red-400' },
+        { value: 'chest', label: t('checkin.chest'), color: 'border-red-400 text-red-400' },
+        { value: 'back', label: t('checkin.back'), color: 'border-red-400 text-red-400' },
+        { value: 'abdomen', label: t('checkin.abdomen'), color: 'border-red-400 text-red-400' },
+        { value: 'hip', label: t('checkin.hip'), color: 'border-red-400 text-red-400' },
+        { value: 'leg', label: t('checkin.leg'), color: 'border-red-400 text-red-400' },
+        { value: 'knee', label: t('checkin.knee'), color: 'border-red-400 text-red-400' },
+        { value: 'ankle', label: t('checkin.ankle'), color: 'border-red-400 text-red-400' },
+        { value: 'foot', label: t('checkin.foot'), color: 'border-red-400 text-red-400' }
+      ]
+    },
+    {
       id: 'metrics',
       title: t('checkin.bodyMetrics'),
       subtitle: t('checkin.trackPhysical'),
@@ -86,11 +108,18 @@ const MorningCheckIn = () => {
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      let nextStep = currentStep + 1;
+      
+      // Pular a pergunta da localização da dor se não houver dor
+      while (nextStep < steps.length && steps[nextStep].condition && !steps[nextStep].condition()) {
+        nextStep++;
+      }
+      
+      setCurrentStep(nextStep);
     } else {
       updateTodayData(answers);
       completeCheckIn();
-      toast.success('CHECK-IN COMPLETE. TIME TO FIGHT!', {
+      toast.success('CHECK-IN COMPLETO. HORA DE LUTAR!', {
         style: {
           background: '#1a1a1a',
           color: '#DC143C',
@@ -155,6 +184,26 @@ const MorningCheckIn = () => {
             {/* Content based on type */}
             {currentStepData.type === 'intro' && (
               <div className="space-y-6">
+                {/* Greeting */}
+                <div className="text-center mb-6">
+                  <motion.h3 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-2xl font-bebas text-blood-400 tracking-wider mb-2"
+                  >
+                    {t('checkin.goodMorning')}
+                  </motion.h3>
+                  <motion.p 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-steel-400 text-sm uppercase tracking-wide"
+                  >
+                    {t('checkin.readyToConquer')}
+                  </motion.p>
+                </div>
+
                 <div className="relative w-48 h-48 mx-auto">
                   <div className="absolute inset-0 bg-gradient-to-r from-blood-600 to-blood-400 blur-xl opacity-50"></div>
                   <Image

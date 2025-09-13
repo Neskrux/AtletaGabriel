@@ -144,10 +144,10 @@ const Secrets = () => {
             <div>
               <h1 className="text-3xl font-bebas tracking-wider text-white flex items-center gap-2">
                 <Lock className="w-8 h-8 text-blood-400" />
-                {language === 'pt-BR' ? 'MEUS SEGREDOS' : 'MY SECRETS'}
+MEUS SEGREDOS
               </h1>
               <p className="text-steel-400 text-sm uppercase tracking-wide">
-                {language === 'pt-BR' ? 'Biblioteca de Táticas Pessoais' : 'Personal Tactics Library'}
+Biblioteca de Táticas Pessoais
               </p>
             </div>
             <button
@@ -193,7 +193,7 @@ const Secrets = () => {
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bebas tracking-wider text-white">
-            <span className="text-blood-400">///</span> {currentCategory.name} {language === 'pt-BR' ? 'TÉCNICAS' : 'TECHNIQUES'}
+            <span className="text-blood-400">///</span> {currentCategory.name} TÉCNICAS
           </h2>
           <span className="text-sm text-steel-400">
             {sortedSecrets.length} {language === 'pt-BR' ? 'segredos' : 'secrets'}
@@ -218,7 +218,7 @@ const Secrets = () => {
                   <p className="text-blood-400 font-medium uppercase text-sm">{secret.technique}</p>
                   {secret.situation && (
                     <p className="text-steel-400 text-sm mt-1">
-                      <span className="text-steel-600">{language === 'pt-BR' ? 'SITUAÇÃO:' : 'SITUATION:'}</span> {secret.situation}
+                      <span className="text-steel-600">SITUAÇÃO:</span> {secret.situation}
                     </p>
                   )}
                 </div>
@@ -267,22 +267,22 @@ const Secrets = () => {
                     <div className="pt-3 border-t border-dark-600 space-y-3">
                       {secret.details && (
                         <div className="bg-dark-700 p-3">
-                          <p className="text-xs text-steel-600 uppercase mb-1">{language === 'pt-BR' ? 'DETALHES:' : 'DETAILS:'}</p>
+                          <p className="text-xs text-steel-600 uppercase mb-1">DETALHES:</p>
                           <p className="text-steel-300 text-sm">{secret.details}</p>
                         </div>
                       )}
                       
                       {secret.reminder && (
                         <div className="bg-blood-900/20 border-l-2 border-blood-600 p-3">
-                          <p className="text-xs text-blood-400 uppercase mb-1">{language === 'pt-BR' ? 'LEMBRETE IMPORTANTE:' : 'IMPORTANT REMINDER:'}</p>
+                          <p className="text-xs text-blood-400 uppercase mb-1">LEMBRETE IMPORTANTE:</p>
                           <p className="text-blood-300 text-sm font-medium">{secret.reminder}</p>
                         </div>
                       )}
 
                       <div className="flex items-center justify-between text-xs text-steel-600">
-                        <span>{language === 'pt-BR' ? 'Criado:' : 'Created:'} {format(new Date(secret.createdAt), 'dd/MM/yyyy', { locale })}</span>
+                        <span>Criado: {format(new Date(secret.createdAt), 'dd/MM/yyyy', { locale })}</span>
                         {secret.updatedAt && (
-                          <span>{language === 'pt-BR' ? 'Atualizado:' : 'Updated:'} {format(new Date(secret.updatedAt), 'dd/MM/yyyy', { locale })}</span>
+                          <span>Atualizado: {format(new Date(secret.updatedAt), 'dd/MM/yyyy', { locale })}</span>
                         )}
                       </div>
                     </div>
@@ -324,10 +324,7 @@ const Secrets = () => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bebas tracking-wider text-white">
-                    {editingSecret ? 
-                      (language === 'pt-BR' ? 'EDITAR SEGREDO' : 'EDIT SECRET') : 
-                      (language === 'pt-BR' ? 'NOVO SEGREDO' : 'NEW SECRET')
-                    }
+                    {editingSecret ? 'EDITAR SEGREDO' : 'NOVO SEGREDO'}
                   </h3>
                   <button
                     onClick={() => {
@@ -425,7 +422,7 @@ const Secrets = () => {
                       }
                       className="w-full px-4 py-2 bg-dark-700 border border-dark-600 text-white focus:border-blood-400 focus:outline-none resize-none"
                       rows={2}
-                      placeholder={language === 'pt-BR' ? 'Ex: NUNCA esquecer de...' : 'Ex: NEVER forget to...'}
+                      placeholder="Ex: NUNCA esquecer de..."
                     />
                   </div>
 

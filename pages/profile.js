@@ -8,10 +8,12 @@ import Image from 'next/image';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 const Profile = () => {
   const { athlete, resetDay } = useStore();
   const { t, language } = useLanguage();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState(athlete);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
@@ -38,7 +40,7 @@ const Profile = () => {
 
   const handleSaveProfile = () => {
     setIsEditing(false);
-    toast.success(language === 'pt-BR' ? 'PERFIL ATUALIZADO' : 'PROFILE UPDATED', {
+    toast.success('PERFIL ATUALIZADO', {
       style: {
         background: '#1a1a1a',
         color: '#DC143C',
@@ -48,14 +50,12 @@ const Profile = () => {
   };
 
   const handleResetApp = () => {
-    const confirmMessage = language === 'pt-BR' 
-      ? 'RESETAR TODOS OS DADOS? ISSO NÃO PODE SER DESFEITO.'
-      : 'RESET ALL DATA? THIS CANNOT BE UNDONE.';
+    const confirmMessage = 'RESETAR TODOS OS DADOS? ISSO NÃO PODE SER DESFEITO.';
       
     if (window.confirm(confirmMessage)) {
       localStorage.clear();
       resetDay();
-      toast.success(language === 'pt-BR' ? 'APP RESETADO' : 'APP RESET COMPLETE', {
+      toast.success('APP RESETADO', {
         style: {
           background: '#1a1a1a',
           color: '#DC143C',
@@ -265,7 +265,10 @@ const Profile = () => {
             <span className="text-blood-400">///</span> {t('profile.systemSettings')}
           </h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center justify-between p-3 hover:bg-dark-700 transition-colors">
+            <button 
+              onClick={() => router.push('/preferences')}
+              className="w-full flex items-center justify-between p-3 hover:bg-dark-700 transition-colors"
+            >
               <div className="flex items-center gap-3">
                 <Settings className="w-5 h-5 text-steel-400" />
                 <span className="text-steel-400 uppercase">{t('profile.preferences')}</span>
